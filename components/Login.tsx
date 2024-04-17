@@ -9,8 +9,15 @@ export default function Login({ changeStatus }: any) {
     const [type, setType] = useState<'Login' | 'Cadastro'>('Login');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const [submitted, setSubmitted] = useState(false);
 
     const handleLogin = () => {
+        setSubmitted(true);
+
+        if(email === '' || password === '') {
+            return;
+        }
+
         if (type === 'Login') {
             firebase.auth().signInWithEmailAndPassword(email, password)
                 .then((user) => {
@@ -62,6 +69,12 @@ export default function Login({ changeStatus }: any) {
                         onChangeText={(text) => setEmail(text)}
                         value={email}
                     />
+                    {submitted && email === '' ?
+                        <View>
+                            <Text>O email não pode estar em branco!</Text>
+                        </View>
+                        : null
+                    }
                     <TextInput
                         style={styles.label}
                         mode="outlined"
@@ -72,6 +85,12 @@ export default function Login({ changeStatus }: any) {
                         outlineColor="#3a7dc9"
                         activeOutlineColor="#3a7dc9"
                     />
+                    {submitted && password === '' ?
+                        <View>
+                            <Text>A senha não pode estar em branco!</Text>
+                        </View>
+                        : null
+                    }
                 </Card.Content>
             </Card>
             <TouchableOpacity
