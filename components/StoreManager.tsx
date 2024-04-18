@@ -28,7 +28,10 @@ const StoreManager = () => {
 
     const [post, setPost] = useState(false);
 
+    const [submitted, setSubmitted] = useState(false);
+
     useEffect(() => {
+        setSubmitted(false);
         const fetchStores = async () => {
             firebase.database().ref('/stores').on('value', (snapshot) => {
                 setStores([]);
@@ -52,6 +55,12 @@ const StoreManager = () => {
     const postStore = async () => {
 
         let store: Store;
+
+        setSubmitted(true);
+
+        if (address === '' || city === '' || name === '' || phoneNumber === '') {
+            return;
+        }
 
         if (id === '') {
             store = {
@@ -83,7 +92,7 @@ const StoreManager = () => {
         setAddress('');
         setPhoneNumber('');
 
-        setPost(true);
+        setPost(!post);
 
     }
 
@@ -100,7 +109,7 @@ const StoreManager = () => {
             const result = window.confirm(['Aviso', 'Deseja realmente excluir a loja?'].filter(Boolean).join('\n'));
             if (result) {
                 await firebase.database().ref('/stores').child(data.id!).remove();
-                setPost(true);
+                setPost(!post);
             } else {
                 return;
             }
@@ -114,7 +123,7 @@ const StoreManager = () => {
                 text: 'Sim',
                 onPress: async () => {
                     await firebase.database().ref('/stores').child(data.id!).remove();
-                    setPost(true);
+                    setPost(!post);
                 }
             }])
         }
@@ -139,6 +148,12 @@ const StoreManager = () => {
                                 onChangeText={(value) => setName(value)}
                                 value={name}
                             />
+                            {submitted && name === '' ?
+                                <View>
+                                    <Text>O nome não pode estar em branco!</Text>
+                                </View>
+                                : null
+                            }
                             <TextInput
                                 style={styles.margin}
                                 mode="outlined"
@@ -148,6 +163,12 @@ const StoreManager = () => {
                                 onChangeText={(value) => setCity(value)}
                                 value={city}
                             />
+                            {submitted && city === '' ?
+                                <View>
+                                    <Text>A cidade não pode estar em branco!</Text>
+                                </View>
+                                : null
+                            }
                             <TextInput
                                 style={styles.margin}
                                 mode="outlined"
@@ -157,6 +178,12 @@ const StoreManager = () => {
                                 onChangeText={(value) => setAddress(value)}
                                 value={address}
                             />
+                            {submitted && address === '' ?
+                                <View>
+                                    <Text>O endereço não pode estar em branco!</Text>
+                                </View>
+                                : null
+                            }
                             <TextInput
                                 style={styles.margin}
                                 mode="outlined"
@@ -166,6 +193,12 @@ const StoreManager = () => {
                                 onChangeText={(value) => setPhoneNumber(value)}
                                 value={phoneNumber}
                             />
+                            {submitted && phoneNumber === '' ?
+                                <View>
+                                    <Text>O telefone não pode estar em branco!</Text>
+                                </View>
+                                : null
+                            }
                         </Card.Content>
                     </Card>
                 </View>

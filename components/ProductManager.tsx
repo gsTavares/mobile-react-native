@@ -28,7 +28,10 @@ const ProductManager = () => {
 
     const [post, setPost] = useState(false);
 
+    const [submitted, setSubmitted] = useState(false);
+
     useEffect(() => {
+        setSubmitted(false);
         const fetchProducts = async () => {
             firebase.database().ref('/products').on('value', (snapshot) => {
                 setProducts([]);
@@ -51,7 +54,13 @@ const ProductManager = () => {
 
     const postProduct = async () => {
 
+        setSubmitted(true);
+
         let product: Product;
+
+        if(name === '' || price === '' || category === '' || quantity === '') {
+            return;
+        }
 
         if (id === '') {
             product = {
@@ -83,7 +92,7 @@ const ProductManager = () => {
         setCategory('');
         setQuantity('');
 
-        setPost(true);
+        setPost(!post);
 
     }
 
@@ -100,7 +109,7 @@ const ProductManager = () => {
             const result = window.confirm(['Aviso', 'Deseja realmente excluir o produto?'].filter(Boolean).join('\n'));
             if (result) {
                 await firebase.database().ref('/products').child(data.id!).remove();
-                setPost(true);
+                setPost(!post);
             } else {
                 return;
             }
@@ -114,7 +123,7 @@ const ProductManager = () => {
                 text: 'Sim',
                 onPress: async () => {
                     await firebase.database().ref('/products').child(data.id!).remove();
-                    setPost(true);
+                    setPost(!post);
                 }
             }])
         }
@@ -139,6 +148,9 @@ const ProductManager = () => {
                                 onChangeText={(value) => setName(value)}
                                 value={name}
                             />
+                            {submitted && name === '' ? <View>
+                                <Text>O nome não pode estar em branco!</Text>
+                            </View> : null}
                             <TextInput
                                 style={styles.margin}
                                 mode="outlined"
@@ -148,6 +160,9 @@ const ProductManager = () => {
                                 onChangeText={(value) => setPrice(value)}
                                 value={price}
                             />
+                            {submitted && price === '' ? <View>
+                                <Text>O preço não pode estar em branco!</Text>
+                            </View> : null}
                             <TextInput
                                 style={styles.margin}
                                 mode="outlined"
@@ -157,6 +172,9 @@ const ProductManager = () => {
                                 onChangeText={(value) => setCategory(value)}
                                 value={category}
                             />
+                            {submitted && category === '' ? <View>
+                                <Text>A categoria não pode estar em branco!</Text>
+                            </View> : null}
                             <TextInput
                                 style={styles.margin}
                                 mode="outlined"
@@ -166,6 +184,9 @@ const ProductManager = () => {
                                 onChangeText={(value) => setQuantity(value)}
                                 value={quantity}
                             />
+                            {submitted && name === '' ? <View>
+                                <Text>A quantidade não pode estar em branco!</Text>
+                            </View> : null}
                         </Card.Content>
                     </Card>
                 </View>
